@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "user/";
+
+// Определение сервиса
+service ExchangeService {
+    // Получение курсов обмена всех валют
+    rpc GetExchangeRates(RatesRequest) returns (ExchangeRatesResponse);
+
+    // Обмен валют
+    rpc ExchangeCurrency(ExchangeRequest) returns (TransactionResponse);
+}
+
+// Auth сервиса
+service Auth{
+    // Регистрация пользователя
+    rpc RegisterUser(RegisterRequest) returns (RegisterResponse);
+    // Авторизация пользователя
+    rpc LoginUser(LoginRequest) returns (LoginResponse);
+}
+
+// Финансовые операции (Баланс, пополнение, вывод)
+service FinancialService {
+    // Получение баланса пользователя
+    rpc GetBalance(GetBalanceRequest) returns (BalanceResponse);
+    
+    // Пополнение счета
+    rpc Deposit(DepositRequest) returns (WithdrawDepositResponse);
+
+    // Вывод средств
+    rpc Withdraw(WithdrawRequest) returns (WithdrawDepositResponse);
+}
+
+// Запрос для регистрации пользователя
+message RegisterRequest{
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+
+// Ответ на запрос регистрации
+message RegisterResponse {
+    string message = 1;
+}
+
+// Запрос для авторизации пользователя
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+// Ответ на запрос авторизации
+message LoginResponse {
+    string token = 1; // JWT токен
+}
+
+// Запрос на получение баланса пользователя
+message GetBalanceRequest {
+    string token = 1; // JWT токен
+}
+
+// Ответ с балансом пользователя
+message BalanceResponse {
+    map<string, float> balance = 1; //баланс
+}
+
+// Запрос на пополнение счета
+message DepositRequest {
+    string token = 1; // JWT токен
+    float amount = 2; // Сколько пополнить
+    string currency = 3; //RUB, USD, EUR
+}
+
+// Запрос на вывод средств
+message WithdrawRequest {
+    string token = 1; // JWT токен
+    float amount = 2; // Сумма для вывода
+    string currency = 3; //RUB, USD, EUR
+}
+
+// Ответ на обмен валюты
+message WithdrawDepositResponse {
+    string message = 1;
+    map<string, float> new_balance = 2;
+}
+
+// Запрос на получение курса валют
+message RatesRequest{
+    string token = 1; //токен авторизации
+}
+
+// Ответ с курсами всех валют
+message ExchangeRatesResponse {
+    string message = 1; //Сообщение о курсе валют
+    map<string, float> rates = 2; // ключ: валюта, значение: курс
+}
+
+// Запрос на обмен валюты
+message ExchangeRequest {
+    string token = 1;
+    string from_currency = 2;   //какую валюту менять
+    string to_currency = 3;     //на какую валюту менять
+    float amount = 4;           //сколько менять
+}
+
+// Ответ на обмен валюты
+message TransactionResponse {
+    string message = 1;     //сообщение об операции
+    float amountFromTo = 2; //сколько получилось
+    map<string, float> balanceFromTo = 3; //получившийся баланс
+}

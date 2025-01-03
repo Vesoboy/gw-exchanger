@@ -1,0 +1,8 @@
+env: "local"
+dev: "dev"
+storage_path: "host=postgres user=admin password=admin dbname=GRPCDB port=5432 sslmode=disable"
+local_storage_path: "host=localhost user=admin password=admin dbname=GRPCDB port=5432 sslmode=disable"
+token_ttl: 1h
+grpc:
+  port: 50051
+  timeout: 5s

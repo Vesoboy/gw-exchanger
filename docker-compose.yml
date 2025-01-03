@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "50051:50051"
+    environment:
+      STORAGE_PATH: "host=postgres user=admin password=admin dbname=GRPCDB port=5432 sslmode=disable"
+    depends_on:
+      - postgres
+
+  walletuser:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "50052:50051"
+    environment:
+      STORAGE_PATH: "host=postgres user=admin password=admin dbname=GRPCDB port=5432 sslmode=disable"
+    depends_on:
+      - postgres
+
+  exchange:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "50053:50051"
+    environment:
+      STORAGE_PATH: "host=postgres user=admin password=admin dbname=GRPCDB port=5432 sslmode=disable"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: GRPCDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
